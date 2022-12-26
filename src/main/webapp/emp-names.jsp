@@ -118,7 +118,7 @@ margin-left:360px;}
 	
 	<div class="row">
 		<div class="container">
-			<h3 class="text-center">List of Employees</h3>
+			<h3 class="text-center">Employees</h3>
 			<hr>
 			<%-- <div class="parent">
 			<div class="child1">
@@ -143,7 +143,9 @@ margin-left:360px;}
 						<th>Salary</th>
 						<th>Addr Id</th>
 						<th>Address</th>
-						 
+						<c:if test="${action!=null && action!=1}">
+							<th>Action</th>
+						</c:if>
 					</tr>
 				</thead>
 				<tbody>
@@ -156,7 +158,23 @@ margin-left:360px;}
 							<td><c:out value="${emp.salary}" /></td>
 							<td><c:out value="${emp.addrid}" /></td>
 							<td><c:out value="${emp.address}" /></td>
-							 
+							<c:if test="${action!=null && action!=1}">
+							<td>
+								<c:if test="${action == 0}">
+									<form action="delete" method="post">
+										<input type="hidden" name="id" value="${emp.empid}" />
+										<input type="submit" value="Delete"/>
+									</form>
+								</c:if>
+								<c:if test="${action == 2}">
+									<form action="edit" method="post">
+										<input type="hidden" name="id" value="${emp.empid}" />
+										<input type="submit" value="Update"/>
+									</form>
+								</c:if>
+								 <!-- can be written in another way -->
+							</td>
+							</c:if>
 						</tr>
 					</c:forEach>
 

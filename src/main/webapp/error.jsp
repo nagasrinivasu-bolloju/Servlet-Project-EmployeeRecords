@@ -39,9 +39,9 @@
 <body bgcolor="red">\
 
 	 <%
-	 	/* response.setHeader("Cache-control","no-cache,no-store,must-revalidate");
+	 	response.setHeader("Cache-control","no-cache,no-store,must-revalidate");
 	 	response.setHeader("pragma","no-cache");
-	 	response.setHeader("Expires","0"); */
+	 	response.setHeader("Expires","0");
 		if(session.getAttribute("admin")==null)
 		{
 			response.sendRedirect("login.jsp");

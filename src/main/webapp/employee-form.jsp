@@ -97,9 +97,9 @@ margin-left:10px;
 
 	 <%
 
-	 	/* response.setHeader("Cache-control","no-cache,no-store,must-revalidate");
+	 	response.setHeader("Cache-control","no-cache,no-store,must-revalidate");
 	 	response.setHeader("pragma","no-cache");
-	 	response.setHeader("Expires","0"); */
+	 	response.setHeader("Expires","0");
 		if(session.getAttribute("admin")==null)
 		{
 			response.sendRedirect("login.jsp");
@@ -127,11 +127,11 @@ margin-left:10px;
 				<caption>
 					<h2>
 						<c:if test="${emp != null}">
-            			<h2 style="margin-left:100px;"\>Updating Employee Record</h2>
-            		</c:if>
+            				<h2 style="margin-left:100px;"\>Updating Employee Record</h2>
+            			</c:if>
 						<c:if test="${emp == null}">
-            			<h2 style="margin-left:100px;">Adding New Employee Record</h2>
-            		</c:if>
+            				<h2 style="margin-left:100px;">Adding New Employee Record</h2>
+            			</c:if>
 					</h2>
 					<hr>
 				</caption>
@@ -139,35 +139,37 @@ margin-left:10px;
 				<c:if test="${emp != null}">
 					<input class="inpu1" type="hidden" name="empid" value="<c:out value='${emp.empid}' />" />
 				</c:if>
-				<c:if test="${emp==null }">
+				<%-- <c:if test="${emp==null }">
 				<div class="empid"> 
 					<label class="emplabel">Emp ID:</label>
-					<input type="text" name="empid" required="required"/>
+					<input type="number" name="empid" min="100" max="10000"  ondrop="return false;" onpaste="return false;"
+					onkeypress="return event.charCode>=48 && event.charCode<=57" required/>
 					</div>
-				</c:if>
+				</c:if> --%>
 				
 				<fieldset class="form-group">
-					<label>FirstName:</label> <input type="text"
-						value="<c:out value='${emp.firstName}' />" class="form-control"
-						name="firstName" required="required">
+					<label>FirstName:</label>
+					<input type="text" value="<c:out value='${emp.firstName}' />" class="form-control"
+						name="firstName" onkeypress="return event.charCode>=65 && event.charCode<=90 || 
+					event.charCode>=97 && event.charCode<=122 || event.charCode==32"required="required">
 				</fieldset>
 
 				<fieldset class="form-group">
-					 <label>LastName:</label>  <input type="text"
-						value="<c:out value='${emp.lastName}' />" class="form-control"
-						name="lastName" required="required">
+					 <label>LastName:</label>  
+					 <input type="text" value="<c:out value='${emp.lastName}' />" onkeypress="return event.charCode>=65 && event.charCode<=90 
+					 || event.charCode>=97 && event.charCode<=122 || event.charCode==32" class="form-control" name="lastName">
 				</fieldset>
 
 				<fieldset class="form-group">
-					<label>Salary:</label> <input type="text"
-						value="<c:out value='${emp.salary}' />" class="form-control"
-						name="salary">
+					<label>Salary:</label>
+					<input type="Number" name="salary" value="<c:out value='${emp.salary}'/>" min="0" step="any" class="form-control"
+					  required/>
 				</fieldset>
 				
 				<fieldset class="form-group">
-					<label>Addr Id:</label> <input type="text"
-						value="<c:out value='${emp.addrid}' />" class="form-control"
-						name="addrid">
+					<label>Addr Id:</label> 
+					<input type="Number"  value="<c:out value='${emp.addrid}' />" class="form-control"
+						name="addrid" min="500" onkeypress="return event.charCode>=48 && event.charCode<=57" required="required">
 				</fieldset>
 				
 				<fieldset class="form-group">

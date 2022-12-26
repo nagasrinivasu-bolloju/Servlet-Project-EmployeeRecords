@@ -1,4 +1,4 @@
-package com.naga.Dao;
+package com.naga.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.naga.service.Emp;
+import com.naga.model.Emp;
 
 public class DaoClass
 {
@@ -47,7 +47,7 @@ public class DaoClass
 		try
 		{
 			statement = connection.createStatement();
-			String sql1="insert into employee values(?,?,?,?,?);";
+			String sql1="insert into employee(firstName,lastName,addrid,salary) values(?,?,?,?);";//change
 			String sql2="insert into address values(?,?);";
 			String sql3="update employee set firstName=?,lastName=?,addrid=?,salary=? where empid=?";
 			prepStatementEmp=connection.prepareStatement(sql1);
@@ -80,11 +80,11 @@ public class DaoClass
 			 return 0; //unable to insert
 		}
 		
-		prepStatementEmp.setInt(1,emp.getEmpid());
-		prepStatementEmp.setString(2,emp.getFirstName());
-		prepStatementEmp.setString(3,emp.getLastName());
-		prepStatementEmp.setInt(4,emp.getAddrid());
-		prepStatementEmp.setFloat(5,emp.getSalary());
+//		prepStatementEmp.setInt(1,emp.getEmpid());         change
+		prepStatementEmp.setString(1,emp.getFirstName());
+		prepStatementEmp.setString(2,emp.getLastName());
+		prepStatementEmp.setInt(3,emp.getAddrid());
+		prepStatementEmp.setFloat(4,emp.getSalary());
 		rows=prepStatementEmp.executeUpdate();
 		}
 		catch(Exception e)
@@ -184,12 +184,37 @@ public class DaoClass
     	}
 		return employees;
 	}
-	public Emp readData(int empid)
+	public List<Emp> readData(String name)
 	{
+		List<Emp> employees=new ArrayList<>();
+		 
+		try
+    	{
+    	ResultSet rs=statement.executeQuery("select * from employee inner join address on employee.addrId=address.addrId where firstName='"+name+"' collate case_insensitive;");
+    	while(rs.next())
+    	{
+    		 Emp emp=new Emp();
+    		 emp.setEmpid(rs.getInt(1));
+    		 emp.setFirstName(rs.getString(2));
+    		 emp.setLastName(rs.getString(3));
+    		 emp.setAddrid(rs.getInt(4));
+    		 emp.setSalary(rs.getFloat(5));
+    		 emp.setAddress(rs.getString(7));
+    		 employees.add(emp);
+    	}
+    	}
+    	catch(Exception e)
+    	{
+    		e.printStackTrace();
+    	}
+		return employees;
+	}
+
+	public Emp readData(int empid) {
 		Emp emp=null;
 		try
     	{
-    	ResultSet rs=statement.executeQuery("select * from employee inner join address on employee.addrId=address.addrId where empid="+empid+";");
+    	ResultSet rs=statement.executeQuery("select * from employee inner join address on employee.addrId=address.addrId where empid="+empid+" collate case_insensitive;");
     	if(rs.next())
     	{
     		 emp=new Emp();
@@ -199,6 +224,11 @@ public class DaoClass
     		 emp.setAddrid(rs.getInt(4));
     		 emp.setSalary(rs.getFloat(5));
     		 emp.setAddress(rs.getString(7));
+    		 
+    	}
+    	else
+    	{
+    		System.out.println("Inside readData!!!!.............emp is nullll");
     	}
     	}
     	catch(Exception e)
@@ -207,5 +237,7 @@ public class DaoClass
     	}
 		return emp;
 	}
+	 
+	
 	
 }

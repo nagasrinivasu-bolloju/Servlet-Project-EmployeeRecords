@@ -41,14 +41,14 @@
 	 label{
 	 /* border:2px solid red; */
 	  margin-top:10px;
-	 margin-left:100px;
+	 margin-left:80px;
 	 font-size:25px;
 	 font-style:arial;
 	 font-weight:600;
 	 color:black;}
 	 
 	 .label-text{
-	 margin-left:150px;}
+	 margin-left:110px;}
 	 
 	 .input-div{
 	 background-color:rgba(255,255,255, 0.73);
@@ -94,6 +94,9 @@ margin-left:10px;
 <body>
 
 	<%
+	response.setHeader("Cache-control","no-cache,no-store,must-revalidate");
+ 	response.setHeader("pragma","no-cache");
+ 	response.setHeader("Expires","0");
 	if(session.getAttribute("admin")==null)
 		{
 			response.sendRedirect("login.jsp");
@@ -115,7 +118,7 @@ margin-left:10px;
 	<div class="container">
 		<!-- <div class="form-div"> -->
 		<%-- <c:out value="${action}"/> --%>
-				<c:if test="${action == 0}">
+				<%-- <c:if test="${action == 0}">
 					<form action="delete" method="post">
 				</c:if>
 				<c:if test="${action == 1}">
@@ -126,18 +129,22 @@ margin-left:10px;
 				</c:if>
 				 <c:if test="${action==null}">
 					<form action="error.jsp" method="post">
-				</c:if>
-				 
+				</c:if> --%>
+				<form action="read-employees-with-similar-names" method="post">
+				<input type="hidden" name="actionState" value="${action}"/>
 				<fieldset class="form-group">
-					<div class="label-div"><label ><div class="label-text">Employee Id:</div></label></div>
+					<div class="label-div"><label ><div class="label-text">Employee First Name:</div></label></div>
 					<br>
-					<input class="input-div" type="text" placeholder="enter employee id" name="id" required="required">
+					<!-- <input class="input-div" type="Number" placeholder="enter employee id" name="id" min="100" max="10000" required="required"> -->
+				 
+					<input class="input-div" type="text" placeholder="                 enter employee First Name" name="name"
+					onkeypress="return event.charCode>=65 && event.charCode<=90 || 
+					event.charCode>=97 && event.charCode<=122 || event.charCode==32" required/>
+ 
 				</fieldset>
-				  
-				<input class="add-emp" type="submit" value="save"  >
-				
+	
+				<input class="add-emp" type="submit" value="submit"  >
 				</form>
-				
 				<div class="child2">
 				<form action= "home.jsp" method="post">
 					<input class="add-emp" type="submit" value="Back">

@@ -1,4 +1,4 @@
-package com.naga.service;
+package com.naga.model;
 
 public class Emp
 {

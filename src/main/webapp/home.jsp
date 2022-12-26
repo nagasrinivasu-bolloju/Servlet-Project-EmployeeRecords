@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" errorPage="error.jsp"%>
+    pageEncoding="ISO-8859-1" errorPage="error.jsp" session="true"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -51,17 +51,18 @@ color:orange;
  }
 .child1 {
 /* border:5px solid green; */
-  display: inline-block;
+   display: inline-block;
   margin-top:20px;
   margin-left:200px;
-  vertical-align: middle;
+  /* vertical-align: middle; */
 }
 .child2{
 /* border:5px solid green; */
 display: inline-block;
 float:right;
 margin-top:20px;
-margin-right:200px;}
+margin-right:200px;
+}
 
 .child3{
 /* border:5px solid green; */
@@ -115,6 +116,10 @@ cursor:pointer;
 }
 
 
+.parent{
+/* border:3px solid red; */
+/* margin-top:10px; */
+}
 .add-emp-logout:hover{
 background-color:rgba(0,0,0,0.7);
 color:orange;
@@ -126,13 +131,13 @@ box-shadow:0px 4px 80px 0 rgba(0,0,0,0.2),0px 6px 40px 0 rgba(0,0,0,0.19);
 <body>
 	
 	 <%
-	 	/* response.setHeader("Cache-control","no-cache,no-store,must-revalidate");
+	 	response.setHeader("Cache-control","no-cache,no-store,must-revalidate");
 	 	response.setHeader("pragma","no-cache");
-	 	response.setHeader("Expires","0"); */
-		if(session.getAttribute("admin")==null || (!(session.getAttribute("admin")).equals("activeState")))
+	 	response.setHeader("Expires","0");
+		 if(session.getAttribute("admin")==null || (!(session.getAttribute("admin")).equals("activeState")))
 		{
 			response.sendRedirect("login.jsp");
-		}
+		} 
 	 %>
 	
 	<header>
@@ -188,7 +193,7 @@ box-shadow:0px 4px 80px 0 rgba(0,0,0,0.2),0px 6px 40px 0 rgba(0,0,0,0.19);
 			</div>
 			
 			<div>
-			<div class="parent">
+			<div class="parent"">
 				<div class="child3">
 					<form action="<%request.getContextPath();%>list" method="post">
 						<input class="add-emp-temp" type="submit" value="Read All Employees Records">
