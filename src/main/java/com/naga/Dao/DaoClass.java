@@ -9,10 +9,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.naga.model.Emp;
 
 public class DaoClass
 {
+	private static Logger log=Logger.getLogger(DaoClass.class);
 	private final String url="jdbc:postgresql://localhost:5432/DemoDB";
 	private final String username="postgres";
 	private final String password="srinu534";
@@ -53,14 +56,14 @@ public class DaoClass
 			prepStatementEmp=connection.prepareStatement(sql1);
 			prepStatementAddr=connection.prepareStatement(sql2);
 			prepStatementUpdate=connection.prepareStatement(sql3);
-			if(statement!=null)
+			if(statement!=null && prepStatementEmp!=null && prepStatementAddr!=null && prepStatementUpdate!=null)
 			{
-				System.out.println("-----------statement statement created successfully---------");
+				log.info("Statements created successfully.");
 				return true;
 			}
 			else
 			{
-				System.out.println("-----------statement  null in createstatement()---------");
+				log.info("Statements  creation failed.");
 			}
 		}
 		catch(Exception e)
@@ -77,9 +80,9 @@ public class DaoClass
 		{
 		if(!checkAddress(emp.getAddrid()) && !addToAddress(emp.getAddrid(),emp.getAddress()))	 //if addrid not present in addresstable or addtoaddress() fails then return false.
 		{
-			 return 0; //unable to insert
+			log.error("address insertion failed.");
+			 return 0;
 		}
-		
 //		prepStatementEmp.setInt(1,emp.getEmpid());         change
 		prepStatementEmp.setString(1,emp.getFirstName());
 		prepStatementEmp.setString(2,emp.getLastName());
@@ -91,6 +94,10 @@ public class DaoClass
 		{
 			e.printStackTrace();
 		}
+		if(rows<=0)
+			log.error("insertion failed at employee table.");
+		else
+			log.info("insertion successfull at employee table.");
 		return rows;
 	}
 	private boolean addToAddress(int addrId,String address)
@@ -107,7 +114,11 @@ public class DaoClass
     		e.printStackTrace();
     	}
     	if(rows>0)
-			return true;
+    	{
+    		log.info("address added successfully.");
+    		return true;
+    	}
+    	log.error("address insertion failed.");
 		return false;
     }
 	private boolean checkAddress(int addrId)
@@ -116,13 +127,16 @@ public class DaoClass
 		{
 		ResultSet rs=statement.executeQuery("select addrid from address where addrid="+addrId);
 		if(!rs.next())
-			return false; //unable to insert
+		{
+			log.info("addrId not found in address table.");
+			return false;  
+		}
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
-		
+		log.info("address already exists in address table");
 		return true;
 	}
 	public int delete(int empId)
@@ -136,6 +150,10 @@ public class DaoClass
     	{
     		e.printStackTrace();
     	}
+		if(rows>0)
+    		log.info("deletion successfull.");
+		else
+			log.error("deletion failed.");
 		return rows;
 	}
 	public int update(Emp emp)
@@ -161,6 +179,7 @@ public class DaoClass
 	}
 	public List<Emp> readData()
 	{
+		log.info("reading all employees.");
 		List<Emp> employees=new ArrayList<Emp>();
 		try
     	{
@@ -187,7 +206,7 @@ public class DaoClass
 	public List<Emp> readData(String name)
 	{
 		List<Emp> employees=new ArrayList<>();
-		 
+		log.info("reading all employees with name: "+name);
 		try
     	{
     	ResultSet rs=statement.executeQuery("select * from employee inner join address on employee.addrId=address.addrId where firstName='"+name+"' collate case_insensitive;");
@@ -212,9 +231,10 @@ public class DaoClass
 
 	public Emp readData(int empid) {
 		Emp emp=null;
+		log.info("reading employee record with empId: "+empid);
 		try
     	{
-    	ResultSet rs=statement.executeQuery("select * from employee inner join address on employee.addrId=address.addrId where empid="+empid+" collate case_insensitive;");
+    	ResultSet rs=statement.executeQuery("select * from employee inner join address on employee.addrId=address.addrId where empid="+empid+";");
     	if(rs.next())
     	{
     		 emp=new Emp();
@@ -228,7 +248,7 @@ public class DaoClass
     	}
     	else
     	{
-    		System.out.println("Inside readData!!!!.............emp is nullll");
+    		log.error("Inside readData!!!!.............emp is nullll");
     	}
     	}
     	catch(Exception e)

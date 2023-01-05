@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.naga.dao.DaoClass;
 import com.naga.model.Emp;
 
@@ -19,6 +21,8 @@ import com.naga.model.Emp;
 public class ServletController extends HttpServlet
 {
 	private static final long serialVersionUID = 1L;
+	
+	private static Logger log=Logger.getLogger(ServletController.class);
 	DaoClass dbClass;
 	public void init()
 	{
@@ -33,13 +37,14 @@ public class ServletController extends HttpServlet
 			e.getMessage();
 		}
 		if(temp==false)
-			System.out.println("-------------Not connetion in init()!!!");
+			log.info("Not DB connection failed.");
 		else
-			System.out.println("---------Connected successfully in init()------------------");
+			log.info("DB connection successfull");
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
+		log.info("doGet method involked.");
 		 String action=request.getServletPath();
 		 switch(action)
 		 {
@@ -84,17 +89,18 @@ public class ServletController extends HttpServlet
 			 reDirectToHome(request,response);
 			 
 		 } 
-		 System.out.println("getContextPath:"+request.getContextPath());
-		 System.out.println("getServletPath:"+request.getServletPath());
+		 log.info("getContextPath:"+request.getContextPath());
+		 log.info("getServletPath:"+request.getServletPath());
 //		response.getWriter().append("Served at: ").append(request.getContextPath()).append(request.getServletPath());
 	}
 	
- 
+	
 	private void reDirectToEmpidForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		int action=Integer.parseInt(request.getParameter("action"));
 		request.setAttribute("action",action);
 		RequestDispatcher rd=request.getRequestDispatcher("empid-form.jsp");
+		log.info("Redirecting to empid-form.jsp");
 		rd.forward(request, response);
 	}
 
@@ -103,6 +109,8 @@ public class ServletController extends HttpServlet
 		HttpSession session=request.getSession();
 		session.removeAttribute("admin");
 		session.invalidate();
+		log.info("loggout out from appication.");
+		log.info("redirecting to login.jsp");
 		response.sendRedirect("login.jsp");
 //		System.out.println("In log out!!!");
 //		Cookie cookie[] = request.getCookies();
@@ -115,17 +123,20 @@ public class ServletController extends HttpServlet
 	}
 
 	private void reDirectToHome(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub\
+		log.info("Redirecting to login page.");
 		response.sendRedirect("login.jsp");
 	}
 
 	private void loginAdmin(HttpServletRequest request, HttpServletResponse response) throws IOException
 	{
-
+		log.info("In login servlet");
+		log.info("checking login credentials");
 		String name=request.getParameter("admin");
 		String pass=request.getParameter("pass");
 		if(name.equals("naga") && pass.equals("123"))
 		{
+			log.info("credentials matched.\n Redirecting to home.jsp");
 			HttpSession session=request.getSession();
 			session.setAttribute("admin","activeState");
 			response.sendRedirect("home.jsp");
@@ -136,35 +147,43 @@ public class ServletController extends HttpServlet
 		}
 		else
 		{
+			log.error("credentials mis-matched!!.\n Redirecting to login page.");
 			response.sendRedirect("login.jsp");
 		}
 	}
 
 	private void redirectToFormWithEmp(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
+		log.info("Retrieving empid");
 		int empid=Integer.parseInt(request.getParameter("id"));
+		System.out.println("empid at edit:"+empid);
 		Emp emp=dbClass.readData(empid);
 		request.setAttribute("emp", emp);
 		RequestDispatcher rd=request.getRequestDispatcher("employee-form.jsp");
+		log.info("Redirecting to emploee-form.jsp");
 		rd.forward(request, response);
 	}
 
 	private void redirectToForm(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException 
 	{
 //response.sendRedirect("employee-form.jsp");
+		log.info("Redirecting to employee-form.jsp");
 		RequestDispatcher rd=request.getRequestDispatcher("employee-form.jsp");
 		rd.forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
+		log.info("Calling doGet method.");
 		doGet(request, response);
 	}
 	private void list(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException 
 	{
+		log.info("retreiving all employees.");
 		List<Emp> employees=dbClass.readData();		
 		request.setAttribute("employees", employees);
 		RequestDispatcher rd=request.getRequestDispatcher("employee-list.jsp");
+		log.info("Redirecting to employee-list.jsp");
 		rd.forward(request, response);
 	}
 
@@ -173,10 +192,12 @@ public class ServletController extends HttpServlet
 		int empid=Integer.parseInt(request.getParameter("id"));
 		if(dbClass.delete(empid)==0)
 		{
+			log.error("deletion failed.\n redirecting to error page.");
 			request.setAttribute("msg","Deletion failed!!!");
 			RequestDispatcher rd=request.getRequestDispatcher("error.jsp");
 			rd.forward(request, response);
 		}
+		log.info("deletion successfull\n redirecting to home page.");
 		response.sendRedirect("home.jsp");
 	}
 
@@ -190,6 +211,7 @@ public class ServletController extends HttpServlet
 		int addrid=Integer.parseInt(request.getParameter("addrid"));
 		Emp emp=new  Emp(empid,firstName,lastName,salary,addrid,address);
 		dbClass.update(emp);
+		log.info("redirecting to home.jsp");
 		response.sendRedirect("home.jsp");
 		
 	}
@@ -203,6 +225,7 @@ public class ServletController extends HttpServlet
 		request.setAttribute("employees", employees);
 		request.setAttribute("length",employees.size());
 		request.setAttribute("action",action);			//check action name check
+		log.info("redirecting to emp-names.jsp");
 		RequestDispatcher rd=request.getRequestDispatcher("emp-names.jsp");
 		rd.forward(request, response);
 	}
@@ -217,6 +240,7 @@ public class ServletController extends HttpServlet
 		int addrid=Integer.parseInt(request.getParameter("addrid"));
 		Emp emp=new Emp(0,firstName,lastName,salary,addrid,address);
 		dbClass.insert(emp);
+		log.info("redirecting to list servlet");
 		response.sendRedirect("list");
 	}
 
